@@ -77,16 +77,6 @@ if execute_button:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Evolução do preço da ação ao longo dos períodos")
-        fig, ax = plt.subplots(figsize=(6, 4))
-        for i in range(num_simulations):
-            ax.plot(range(num_periods + 1), prices[i], lw=0.8, alpha=0.6)
-        ax.set_title('Evolução do preço da ação')
-        ax.set_xlabel(f'{time_unit}(s)')
-        ax.set_ylabel('Preço da ação')
-        st.pyplot(fig)
-
-    with col2:
         st.subheader("Evolução do preço da ação - Primeira Simulação")
         fig, ax = plt.subplots(figsize=(6, 4))
         ax.plot(range(num_periods + 1), prices[0], lw=2, color='blue')
@@ -95,6 +85,15 @@ if execute_button:
         ax.set_ylabel('Preço da ação')
         st.pyplot(fig)
 
+    with col2:
+        st.subheader("Evolução do preço da ação ao longo dos períodos")
+        fig, ax = plt.subplots(figsize=(6, 4))
+        for i in range(num_simulations):
+            ax.plot(range(num_periods + 1), prices[i], lw=0.8, alpha=0.6)
+        ax.set_title('Evolução do preço da ação')
+        ax.set_xlabel(f'{time_unit}(s)')
+        ax.set_ylabel('Preço da ação')
+        st.pyplot(fig)
 
     st.subheader("Distribuição dos preços finais após os períodos simulados")
     fig, ax = plt.subplots(figsize=(6, 4))
