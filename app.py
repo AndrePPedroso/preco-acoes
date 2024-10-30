@@ -24,9 +24,7 @@ def monte_carlo_simulation(S0, mu, sigma, time_unit, num_periods, num_simulation
     for i in range(num_simulations):
         for t in range(1, num_periods + 1):
             epsilon = np.random.normal(0, 1)
-            # Calculando a mudança de preço usando a fórmula discreta
             delta_S = (mu * dt * prices[i, t-1]) + (sigma * np.sqrt(dt) * prices[i, t-1] * epsilon)
-            # Atualizando o preço da ação
             prices[i, t] = prices[i, t-1] + delta_S
 
     return prices
@@ -38,10 +36,10 @@ st.title("Simulação de Monte Carlo para Preços de Ações")
 if 'button_disabled' not in st.session_state:
     st.session_state.button_disabled = True
 
-# Inputs do usuário com validações
+# Inputs do usuário com validações e 4 casas decimais
 S0 = st.number_input("Preço inicial (S0):", value=100.0, step=1.0, min_value=1.0, max_value=10000.0)
-mu = st.number_input("Retorno anual (mu):", value=0.15, step=0.01, max_value=1.0)
-sigma = st.number_input("Volatilidade (sigma):", value=0.3, step=0.01, max_value=1.0)
+mu = st.number_input("Retorno anual (mu):", value=0.1500, step=0.0001, max_value=1.0, format="%.4f")
+sigma = st.number_input("Volatilidade (sigma):", value=0.3000, step=0.0001, max_value=1.0, format="%.4f")
 time_unit = st.selectbox("Unidade de tempo:", ['Dia', 'Semana', 'Mês', 'Ano'])
 num_periods = st.number_input("Número de períodos:", value=10, min_value=1, max_value=10000)
 num_simulations = st.number_input("Número de simulações:", value=100, min_value=1, max_value=100000)
@@ -58,9 +56,8 @@ max_periods = {
 execute_button = st.button("Executar Simulação")
 
 if execute_button:
-    if num_periods > max_periods[time_unit] or S0>10000 or num_simulations>100000 or sigma>1 or mu>1:
+    if num_periods > max_periods[time_unit] or S0 > 10000 or num_simulations > 100000 or sigma > 1 or mu > 1:
         pass
-    # Executando a simulação
     prices = monte_carlo_simulation(S0, mu, sigma, time_unit, int(num_periods), int(num_simulations))
     
     # Coletando os preços finais após os períodos simulados
@@ -73,7 +70,7 @@ if execute_button:
     max_price = np.max(final_prices)
     median_price = np.median(final_prices)
 
-        # Criando colunas para exibir gráficos lado a lado
+    # Criando colunas para exibir gráficos lado a lado
     col1, col2 = st.columns(2)
 
     with col1:
@@ -103,14 +100,12 @@ if execute_button:
     ax.set_ylabel('Frequência')
     st.pyplot(fig)
 
-
-    # Estatísticas descritivas
+    # Estatísticas descritivas com precisão de 4 casas decimais
     st.subheader("Estatísticas Descritivas dos Preços Finais")
     df = pd.DataFrame(final_prices, columns=["Preços Finais"])
-    descriptive_stats = df.describe()
+    descriptive_stats = df.describe().applymap(lambda x: f'{x:.4f}')
     st.write(descriptive_stats)
 
-    # Observação final
     st.markdown("""
     **Observação:**
     Prezad@ usuári@, as informações apresentadas não devem ser interpretadas como recomendação de qualquer natureza, para quaisquer tipos de investimentos, estratégias ou transações comerciais. A única finalidade é a didática, ou seja, apoiar o processo de ensino-aprendizagem-avaliação de tópicos de análise de investimentos.""")
